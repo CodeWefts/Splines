@@ -10,7 +10,6 @@ public class DrawInEditor : MonoBehaviour
         SplineManager splineManager = gameObject.transform.GetComponent<SplineManager>();
         if(splineManager.splines == null || splineManager.splines.Count == 0)
         {
-            Debug.Log("RHAAAAAAAAAAAAAA");
             return;
         }
 

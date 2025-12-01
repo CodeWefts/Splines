@@ -42,36 +42,40 @@ public class SplineManager : MonoBehaviour
         return -1;
     }
 
-    public void AddControlPoint(int idx = -1)
+    public string FindIndex(int idx = -1)
     {
         if(idx != -1)
         {
-            GameObject spline = new GameObject("Spline_" + idx.ToString());
+            return idx.ToString();
+        }
+        else
+        {
+            return splines.Count.ToString();
+        }
+    }
 
-            GameObject controlPoint0 = CreateControlPoint(Vector3.zero);
-            controlPoint0.transform.parent = spline.transform;
-            GameObject controlPoint1 = CreateControlPoint(Vector3.one);
-            controlPoint1.transform.parent = spline.transform;
+    public void AddControlPoint(int idx = -1)
+    {
+        GameObject spline = new GameObject("Spline_" + FindIndex(idx));
+        spline.AddComponent<AlgorithmSelection>();
 
-            List<GameObject> newSpline = new List<GameObject>();
-            newSpline.Add(controlPoint0);
-            newSpline.Add(controlPoint1);
+        GameObject controlPoint0 = CreateControlPoint(Vector3.zero);
+        controlPoint0.transform.parent = spline.transform;
 
+        GameObject controlPoint1 = CreateControlPoint(Vector3.one);
+        controlPoint1.transform.parent = spline.transform;
+
+
+        List<GameObject> newSpline = new List<GameObject>();
+        newSpline.Add(controlPoint0);
+        newSpline.Add(controlPoint1);
+
+        if (idx != -1)
+        {
             splines[idx] = newSpline;
         }
         else
         {
-            GameObject spline = new GameObject("Spline_" + splines.Count.ToString());
-
-            GameObject controlPoint0 = CreateControlPoint(Vector3.zero);
-            controlPoint0.transform.parent = spline.transform;
-            GameObject controlPoint1 = CreateControlPoint(Vector3.one);
-            controlPoint1.transform.parent = spline.transform;
-
-            List<GameObject> newSpline = new List<GameObject>();
-            newSpline.Add(controlPoint0);
-            newSpline.Add(controlPoint1);
-
             splines.Add(newSpline);
         }
     }
@@ -116,13 +120,11 @@ public class SplineManager : MonoBehaviour
     {
         splines.Clear();
 
-        // Parcourt tous les GameObjects racine de la scène active
         Scene scene = gameObject.scene;
         var roots = scene.GetRootGameObjects();
 
         foreach (var root in roots)
         {
-            // On parcourt toute la hiérarchie du root
             foreach (Transform t in root.GetComponentsInChildren<Transform>(true))
             {
                 if (!t.name.StartsWith("Spline_"))
