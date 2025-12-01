@@ -1,25 +1,27 @@
 using UnityEngine;
 using System.Collections.Generic;
-using UnityEditor;
-using System.Linq;
+using UnityEngine.SceneManagement;
 
+
+#if UNITY_EDITOR
+using UnityEditor;
+using UnityEditor.SceneManagement;
+#endif
+
+[ExecuteAlways]
 public class SplineManager : MonoBehaviour
 {
-
-    public List<List<GameObject>> splines;
+    [Header("List of Splines")]
+    [SerializeField] public List<List<GameObject>> splines = new List<List<GameObject>>();
 
     public void AddingNewSpline()
     {
-        if (splines == null)
-        {
-            splines = new List<List<GameObject>>();
-        }
 
         int tmpIdx = GetEmptySplineIdx();
 
         if (tmpIdx > -1)
         {
-            Debug.Log("Spline is null.");
+            Debug.Log("Spline is null..");
             AddControlPoint(tmpIdx);
         }
         else
@@ -32,15 +34,9 @@ public class SplineManager : MonoBehaviour
     {
         for (int i = 0; i < splines.Count; i++)
         {
-            if (splines[i][0] != null)
-            {
-                Debug.Log("Spline " + i.ToString() + " has " + splines[i].Count.ToString() + " control points.");
-            }
-            else
+            if (splines[i][0] == null)
             {
                 return i;
-                Debug.Log("Spline is null.");
-                break;
             }
         }
         return -1;
@@ -75,6 +71,7 @@ public class SplineManager : MonoBehaviour
             List<GameObject> newSpline = new List<GameObject>();
             newSpline.Add(controlPoint0);
             newSpline.Add(controlPoint1);
+
             splines.Add(newSpline);
         }
     }
@@ -92,4 +89,60 @@ public class SplineManager : MonoBehaviour
         renderer.sharedMaterial = tmpMaterial;
         return cube;
     }
+
+    private void OnEnable()
+    {
+        RefreshSplines();
+    }
+
+#if UNITY_EDITOR
+    private void OnValidate()
+    {
+        RefreshSplines();
+    }
+#endif
+
+    private void RefreshSplines()
+    {
+        FillSplinesFromScene();
+
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+            EditorUtility.SetDirty(this);
+#endif
+    }
+
+    public void FillSplinesFromScene()
+    {
+        splines.Clear();
+
+        // Parcourt tous les GameObjects racine de la scène active
+        Scene scene = gameObject.scene;
+        var roots = scene.GetRootGameObjects();
+
+        foreach (var root in roots)
+        {
+            // On parcourt toute la hiérarchie du root
+            foreach (Transform t in root.GetComponentsInChildren<Transform>(true))
+            {
+                if (!t.name.StartsWith("Spline_"))
+                    continue;
+
+                var controlPoints = new List<GameObject>();
+                foreach (Transform cp in t)
+                    controlPoints.Add(cp.gameObject);
+
+                if (controlPoints.Count > 0)
+                    splines.Add(controlPoints);
+            }
+        }
+    }
+
+#if UNITY_EDITOR
+    [ContextMenu("Refresh Splines Now")]
+    private void ContextRefresh()
+    {
+        RefreshSplines();
+    }
+#endif
 }

@@ -8,6 +8,12 @@ public class DrawInEditor : MonoBehaviour
     public void OnDrawGizmos()
     {
         SplineManager splineManager = gameObject.transform.GetComponent<SplineManager>();
+        if(splineManager.splines == null || splineManager.splines.Count == 0)
+        {
+            Debug.Log("RHAAAAAAAAAAAAAA");
+            return;
+        }
+
         if (splineManager.splines != null && splineManager.splines.Count > 0)
         {
             for (int i =0; i < splineManager.splines.Count; i++)
