@@ -1,6 +1,8 @@
-using UnityEngine;
+﻿using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using System.Collections;
+
 
 
 #if UNITY_EDITOR
@@ -94,17 +96,34 @@ public class SplineManager : MonoBehaviour
         return cube;
     }
 
+    // REFRESH SPLINES IN EDITOR 
+    // -------------------------
+
+    // Reminder : Execute when the object is enabled (After the Awake)
     private void OnEnable()
     {
-        RefreshSplines();
+        StartCoroutine(DelayedRefreshSplines());
+    }
+    
+#if UNITY_EDITOR
+    // Reminder : Execute when the scene is loading
+    private void OnValidate()
+    {
+        EditorApplication.delayCall -= DelayedValidate;
+        EditorApplication.delayCall += DelayedValidate;
     }
 
-#if UNITY_EDITOR
-    private void OnValidate()
+    private void DelayedValidate()
     {
         RefreshSplines();
     }
 #endif
+
+    private IEnumerator DelayedRefreshSplines()
+    {
+        yield return new WaitForSeconds(0.1f);
+        RefreshSplines();
+    }
 
     private void RefreshSplines()
     {
@@ -120,7 +139,13 @@ public class SplineManager : MonoBehaviour
     {
         splines.Clear();
 
-        Scene scene = gameObject.scene;
+        Scene scene = GetValidScene();
+
+        if (!scene.IsValid())
+        {
+            Debug.LogError("No valid scene found for SplineManager.");
+        }
+
         var roots = scene.GetRootGameObjects();
 
         foreach (var root in roots)
@@ -139,6 +164,33 @@ public class SplineManager : MonoBehaviour
             }
         }
     }
+
+    private Scene GetValidScene()
+    {
+        Scene scene = gameObject.scene;
+        if (scene.IsValid() && scene.isLoaded)
+            return scene;
+
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+        {
+            scene = SceneManager.GetActiveScene();
+            if (scene.IsValid() && scene.isLoaded)
+                return scene;
+        }
+#endif
+
+        // 3. Last resort
+        for (int i = 0; i < SceneManager.sceneCount; i++)
+        {
+            scene = SceneManager.GetSceneAt(i);
+            if (scene.IsValid() && scene.isLoaded)
+                return scene;
+        }
+
+        return default;
+    }
+
 
 #if UNITY_EDITOR
     [ContextMenu("Refresh Splines Now")]
