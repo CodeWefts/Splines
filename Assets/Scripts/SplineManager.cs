@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using UnityEngine.SceneManagement;
 using System.Collections;
 
-
-
 #if UNITY_EDITOR
 using UnityEditor;
 using UnityEditor.SceneManagement;
@@ -18,7 +16,6 @@ public class SplineManager : MonoBehaviour
 
     public void AddingNewSpline()
     {
-
         int tmpIdx = GetEmptySplineIdx();
 
         if (tmpIdx > -1)
@@ -67,7 +64,6 @@ public class SplineManager : MonoBehaviour
         GameObject controlPoint1 = CreateControlPoint(Vector3.one);
         controlPoint1.transform.parent = spline.transform;
 
-
         List<GameObject> newSpline = new List<GameObject>();
         newSpline.Add(controlPoint0);
         newSpline.Add(controlPoint1);
@@ -82,7 +78,7 @@ public class SplineManager : MonoBehaviour
         }
     }
 
-    public GameObject CreateControlPoint(Vector3 position)
+    public static GameObject CreateControlPoint(Vector3 position)
     {
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.transform.position = position;
@@ -113,7 +109,7 @@ public class SplineManager : MonoBehaviour
         EditorApplication.delayCall += DelayedValidate;
     }
 
-    private void DelayedValidate()
+    public void DelayedValidate()
     {
         RefreshSplines();
     }
@@ -125,7 +121,7 @@ public class SplineManager : MonoBehaviour
         RefreshSplines();
     }
 
-    private void RefreshSplines()
+    public void RefreshSplines()
     {
         FillSplinesFromScene();
 
