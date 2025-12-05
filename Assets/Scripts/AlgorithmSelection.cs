@@ -1,5 +1,8 @@
+using System.Collections;
+using System.Numerics;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class AlgorithmSelection : MonoBehaviour
 {
     
@@ -10,28 +13,30 @@ public class AlgorithmSelection : MonoBehaviour
         B_Spline,
         Catmull_Rom
     }
+    private Hermite hermite = new Hermite();
 
     [SerializeField] public AlgorithmType selectedAlgorithm = AlgorithmType.Hermite;
 
-    public void Switch()
+
+    private void OnEnable()
     {
         switch (selectedAlgorithm)
         {
             case AlgorithmType.Hermite:
-                
+                hermite.Testing();
+                //hermite.HermiteCalc(gameObject);
                 break;
             case AlgorithmType.Bezier:
-                
+
                 break;
             case AlgorithmType.B_Spline:
-                
+
                 break;
             case AlgorithmType.Catmull_Rom:
-                
+
                 break;
             default:
                 break;
-
         }
     }
 }

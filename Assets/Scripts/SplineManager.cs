@@ -23,7 +23,7 @@ public class SplineManager : MonoBehaviour
 
         if (tmpIdx > -1)
         {
-            Debug.Log("Spline is null..");
+            Debug.Log("Spline is null..\nReallocation in progress...");
             AddControlPoint(tmpIdx);
         }
         else
