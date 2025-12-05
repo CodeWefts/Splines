@@ -1,7 +1,5 @@
-//using System.Numerics;
 using UnityEngine;
 
-[ExecuteInEditMode]
 public class Hermite
 {
     // STEPS BY STEPS
@@ -37,14 +35,18 @@ public class Hermite
         return result;
     }
 
-    public static Vector3 Tangent(GameObject[] ControlPoints, int i, float tension = 00.5f)
+    public static Vector3 Tangent(GameObject[] ControlPoints, int i, float tension = 0.5f)
     {
         if (i == 0)
-            return tension * (ControlPoints[1].transform.position - ControlPoints[0].transform.position);
+            return tension * ControlPoints[0].transform.forward;
         if (i == ControlPoints.Length - 1)
-            return tension * (ControlPoints[i].transform.position - ControlPoints[i - 1].transform.position);
+            return tension * ControlPoints[i].transform.forward;
+        
+        Vector3 localForward = ControlPoints[i].transform.forward;
+        Vector3 toNext = (ControlPoints[i + 1].transform.position - ControlPoints[i].transform.position).normalized;
 
-        return tension * (ControlPoints[i + 1].transform.position - ControlPoints[i - 1].transform.position);
+        return tension * Vector3.Slerp(localForward, toNext, 0.5f);
+        //return tension * (ControlPoints[i + 1].transform.position - ControlPoints[i - 1].transform.position);
     }
 
     public void Testing()

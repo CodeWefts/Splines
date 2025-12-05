@@ -10,6 +10,7 @@ public class DrawInEditor : MonoBehaviour
 
     [Range(2, 100)]
     public int samplesPerSegment = 20;
+    
 
     public void OnDrawGizmos()
     {
@@ -40,7 +41,7 @@ public class DrawInEditor : MonoBehaviour
             AlgorithmType selected = spline[i].gameObject.GetComponentInParent<AlgorithmSelection>().selectedAlgorithm;
 
             GameObject[] pts = spline.ToArray();
-            Gizmos.color = Color.red;
+            
 
             switch (selected)
             {
@@ -68,14 +69,13 @@ public class DrawInEditor : MonoBehaviour
         //Hermite Drawing
         for (int j = 0; j < pts.Length - 1; j++)
         {
-            if (pts[j] == null || pts[j + 1] == null)
-                continue;
+            Gizmos.color = Color.red;
 
             Vector3 P0 = pts[j].transform.position;
             Vector3 P1 = pts[j + 1].transform.position;
 
-            Vector3 T0 = Hermite.Tangent(pts, j);
-            Vector3 T1 = Hermite.Tangent(pts, j + 1);
+            Vector3 T0 = Hermite.Tangent(pts, j, pts[j].gameObject.GetComponent<ControlPoint>().tension);
+            Vector3 T1 = Hermite.Tangent(pts, j + 1, pts[j + 1].gameObject.GetComponent<ControlPoint>().tension);
 
             Vector3 prev = P0;
             for (int s = 1; s <= samplesPerSegment; s++)

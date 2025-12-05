@@ -92,7 +92,7 @@ public class SplineManager : MonoBehaviour
         return cube;
     }
 
-    // REFRESH SPLINES IN EDITOR 
+    // REFRESH SPLINES IN EDITOR test
     // -------------------------
 
     // Reminder : Execute when the object is enabled (After the Awake)

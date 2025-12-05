@@ -17,7 +17,6 @@ public class AlgoManagerEditor : Editor
         if(GUILayout.Button("New Spline"))
         {
             splineManager.AddingNewSpline();
-            Debug.Log("Button Pressed in Custom Editor");
         }
     }
 }
