@@ -1,9 +1,5 @@
 # Splines Editor (Unity 6, C#)
 
-## Author
-
-> **Morgane DERO** - Master 1 Game Programmer at Isart Digital 
-
 ## Description
 
 Tool made in Unity 6 to create, edit and visualize spline curves (Hermite, Bézier, B‑Spline, Catmull‑Rom) and animate GameObjects along them.
@@ -59,9 +55,13 @@ All functions work in 3D (Vector3) and assume t ∈ [0,1].
      * Black polyline between control points.
      * Colored spline curve:
        * Red: Hermite
-       * Magenta: Bézier
+       * ![Hermite](/Assets/Screenshots/Screenshots/Hermite.png)
+       * Magenta: Bezier
+       * ![Bezier](/Assets/Screenshots/Screenshots/Bezier.png)
        * Green: B‑Spline
+       * ![B‑Spline](/Assets/Screenshots/Screenshots/B_Spline.png)
        * Cyan: Catmull‑Rom
+       * ![Catmull‑Rom](/Assets/Screenshots/Screenshots/Catmull_Rom.png)
 
 ## Animation usage
 On each Spline_X:
@@ -84,7 +84,9 @@ Result: all assigned objects move smoothly along the selected spline type, each 
 * SplineManager is marked [ExecuteAlways] to keep the spline list updated in Edit and Play modes.
 * The project is intended to compile without any errors or warnings in both Editor and Player builds, as required in the assignment.
 
+## Author
 
+> **Morgane DERO** - Master 1 Game Programmer at Isart Digital 
 
 
 
