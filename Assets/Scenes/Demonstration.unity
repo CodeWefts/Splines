@@ -602,7 +602,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5ca0bd7e0f6252f429dd5fb9a224246c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_ObjectToAnimate: []
+  m_ObjectToAnimate:
+  - {fileID: 69938466}
   pos_t: 0
   speed: 1
   loop: 0
@@ -957,6 +958,11 @@ PrefabInstance:
 Transform:
   m_CorrespondingSourceObject: {fileID: 2795434798738426768, guid: 74bb5b023da26b74fb2f6fdb664d1bb6, type: 3}
   m_PrefabInstance: {fileID: 65223516}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &69938466 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1876022170203810109, guid: 671990e981a3c9e43bf1c64e2062e81e, type: 3}
+  m_PrefabInstance: {fileID: 324182244}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &77921098
 PrefabInstance:
@@ -20703,7 +20709,7 @@ MonoBehaviour:
   - {fileID: 1423890328}
   pos_t: 0
   speed: 1
-  loop: 0
+  loop: 1
 --- !u!114 &2089617404
 MonoBehaviour:
   m_ObjectHideFlags: 0

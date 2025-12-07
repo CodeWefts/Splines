@@ -32,7 +32,6 @@ public class SplineAnimation : MonoBehaviour
             Vector3 startPos = GetStartPosition();
             GameObject newObj = Instantiate(m_ObjectToAnimate[i], startPos, Quaternion.identity);
             newObj.name = $"{m_ObjectToAnimate[i].name}_Follower_{i}";
-            newObj.transform.SetParent(transform, true);
 
             instantiatedObjects[i] = newObj;
         }
