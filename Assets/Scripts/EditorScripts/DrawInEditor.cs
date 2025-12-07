@@ -1,34 +1,41 @@
-﻿
-#if UNITY_EDITOR
-using System.Collections.Generic;
-using UnityEditor;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using static AlgorithmSelection;
-using static UnityEngine.GraphicsBuffer;
 
 [ExecuteAlways]
 public class DrawInEditor : MonoBehaviour
 {
     [Range(2, 100)]
     public int samplesPerSegment = 20;
-    
+
+    [Tooltip("Optional explicit reference to the SplineManager. If null, the script will try to find it on this GameObject.")]
+    public SplineManager splineManager;
+
+    private void Reset()
+    {
+        if (splineManager == null)
+            splineManager = GetComponent<SplineManager>();
+    }
 
     public void OnDrawGizmos()
     {
-        SplineManager splineManager = gameObject.transform.GetComponent<SplineManager>();
+        if (splineManager == null)
+            splineManager = GetComponent<SplineManager>();
+
         if (splineManager == null || splineManager.splines == null || splineManager.splines.Count == 0)
             return;
 
         for (int i = 0; i < splineManager.splines.Count; i++)
         {
-            var spline = splineManager.splines[i];
+            List<GameObject> spline = splineManager.splines[i];
+            if (spline == null || spline.Count == 0)
+                continue;
 
             if (spline[0] == null || spline[0].transform == null || spline[0].transform.parent == null)
                 continue;
 
+            // Draw control polygon
             Gizmos.color = Color.black;
-
-            //Polyline Drawing
             for (int j = 0; j < spline.Count - 1; j++)
             {
                 if (spline[j] != null && spline[j + 1] != null)
@@ -36,12 +43,12 @@ public class DrawInEditor : MonoBehaviour
                     Gizmos.DrawLine(spline[j].transform.position, spline[j + 1].transform.position);
                 }
             }
-
-            AlgorithmType selected = spline[0].transform.parent.GetComponent<AlgorithmSelection>().selectedAlgorithm;
+            
+            AlgorithmType selected =
+                spline[0].transform.parent.GetComponent<AlgorithmSelection>().selectedAlgorithm;
 
             GameObject[] pts = spline.ToArray();
             
-
             switch (selected)
             {
                 case AlgorithmType.Hermite:
@@ -56,10 +63,7 @@ public class DrawInEditor : MonoBehaviour
                 case AlgorithmType.Catmull_Rom:
                     DrawCatmullRom(pts);
                     break;
-                default:
-                    break;
             }
-
         }
     }
 
@@ -68,7 +72,6 @@ public class DrawInEditor : MonoBehaviour
         if (pts == null || pts.Length < 2)
             return;
 
-        //Hermite Drawing
         for (int j = 0; j < pts.Length - 1; j++)
         {
             if (pts[j] == null || pts[j + 1] == null) continue;
@@ -81,7 +84,6 @@ public class DrawInEditor : MonoBehaviour
 
             ControlPoint cp0 = pts[j].GetComponent<ControlPoint>();
             ControlPoint cp1 = pts[j + 1].GetComponent<ControlPoint>();
-
             if (cp0 == null || cp1 == null) continue;
 
             Vector3 T0 = Hermite.Tangent(pts, j, cp0.tension);
@@ -100,21 +102,15 @@ public class DrawInEditor : MonoBehaviour
 
     private void DrawBezier(GameObject[] pts)
     {
-        if (pts.Length < 4)
-        { 
-            GameObject controlPoint = SplineManager.CreateControlPoint(Vector3.zero);
-            controlPoint.transform.parent = pts[0].transform.parent;
+        if (pts == null || pts.Length < 4)
+            return;
 
-            SplineManager splineManager = GameObject.Find("Manager").GetComponent<SplineManager>();
-            splineManager.DelayedValidate();
-        }
+        Gizmos.color = Color.magenta;
 
-        for (int j = 0; j < pts.Length - 3; j++)
+        for (int j = 0; j <= pts.Length - 4; j++)
         {
             if (pts[j] == null || pts[j + 1] == null || pts[j + 2] == null || pts[j + 3] == null)
                 continue;
-
-            Gizmos.color = Color.magenta;
 
             Vector3 P0 = pts[j].transform.position;
             Vector3 P1 = pts[j + 1].transform.position;
@@ -134,14 +130,8 @@ public class DrawInEditor : MonoBehaviour
 
     private void DrawBSpline(GameObject[] pts)
     {
-        if (pts.Length < 4)
-        {
-            GameObject controlPoint = SplineManager.CreateControlPoint(Vector3.zero);
-            controlPoint.transform.parent = pts[0].transform.parent;
-
-            SplineManager splineManager = GameObject.Find("Manager").GetComponent<SplineManager>();
-            splineManager.DelayedValidate();
-        }
+        if (pts == null || pts.Length < 4)
+            return;
 
         Gizmos.color = Color.green;
 
@@ -170,20 +160,14 @@ public class DrawInEditor : MonoBehaviour
     private void DrawCatmullRom(GameObject[] pts)
     {
         if (pts == null || pts.Length < 4)
-        {
-            GameObject controlPoint = SplineManager.CreateControlPoint(Vector3.zero);
-            controlPoint.transform.parent = pts[0].transform.parent;
+            return;
 
-            SplineManager splineManager = GameObject.Find("Manager").GetComponent<SplineManager>();
-            splineManager.DelayedValidate();
-        }
+        Gizmos.color = Color.cyan;
 
-        for (int j = 0; j < pts.Length - 3; j++)
+        for (int j = 0; j <= pts.Length - 4; j++)
         {
             if (pts[j] == null || pts[j + 1] == null || pts[j + 2] == null || pts[j + 3] == null)
                 continue;
-
-            Gizmos.color = Color.cyan;
 
             Vector3 P0 = pts[j].transform.position;
             Vector3 P1 = pts[j + 1].transform.position;
@@ -196,11 +180,9 @@ public class DrawInEditor : MonoBehaviour
             {
                 float t = (float)s / samplesPerSegment;
                 Vector3 curr = Catmull_Rom.SCR(P0, P1, P2, P3, t);
-
                 Gizmos.DrawLine(prev, curr);
                 prev = curr;
             }
         }
     }
 }
-#endif

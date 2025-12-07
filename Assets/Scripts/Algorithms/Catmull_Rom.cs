@@ -30,8 +30,4 @@ public class Catmull_Rom : MonoBehaviour
 
         return 0.5f * (term0 + term1 + term2 + term3);
     }
-
-    public static void Testing()
-    { }
-
 }

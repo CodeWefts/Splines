@@ -33,7 +33,4 @@ public class B_Spline : MonoBehaviour
         Vector3 result = (term0 + term1 + term2 + term3) / 6f;
         return result;
     }
-
-    public static void Testing()
-    { }
 }
