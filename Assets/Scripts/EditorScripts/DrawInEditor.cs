@@ -141,19 +141,20 @@ public class DrawInEditor : MonoBehaviour
             splineManager.DelayedValidate();
         }
 
-        for (int j = 0; j < pts.Length - 3; j++)
+        Gizmos.color = Color.green;
+
+        for (int j = 0; j <= pts.Length - 4; j++)
         {
             if (pts[j] == null || pts[j + 1] == null || pts[j + 2] == null || pts[j + 3] == null)
                 continue;
-
-            Gizmos.color = Color.green;
 
             Vector3 P0 = pts[j].transform.position;
             Vector3 P1 = pts[j + 1].transform.position;
             Vector3 P2 = pts[j + 2].transform.position;
             Vector3 P3 = pts[j + 3].transform.position;
 
-            Vector3 prev = P0;
+            Vector3 prev = B_Spline.SBS(P0, P1, P2, P3, 0f);
+
             for (int s = 1; s <= samplesPerSegment; s++)
             {
                 float t = (float)s / samplesPerSegment;

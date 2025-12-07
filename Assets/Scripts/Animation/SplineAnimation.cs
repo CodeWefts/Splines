@@ -160,6 +160,8 @@ public class SplineAnimation : MonoBehaviour
         if (startIdx + 3 >= controlPoints.Count)
             startIdx = controlPoints.Count - 4;
 
+        segmentIdx = Mathf.Clamp(segmentIdx, 0, controlPoints.Count - 4);
+
         Vector3 P0 = controlPoints[startIdx].transform.position;
         Vector3 P1 = controlPoints[startIdx + 1].transform.position;
         Vector3 P2 = controlPoints[startIdx + 2].transform.position;
