@@ -14,18 +14,14 @@ public class DrawInEditor : MonoBehaviour
     public void OnDrawGizmos()
     {
         SplineManager splineManager = gameObject.transform.GetComponent<SplineManager>();
-        if (splineManager.splines == null || splineManager.splines.Count == 0)
-        {
+        if (splineManager == null || splineManager.splines == null || splineManager.splines.Count == 0)
             return;
-        }
-
-        splineManager.DelayedValidate();
 
         for (int i = 0; i < splineManager.splines.Count; i++)
         {
             var spline = splineManager.splines[i];
 
-            if (spline == null || spline.Count < 2)
+            if (spline[0] == null || spline[0].transform == null || spline[0].transform.parent == null)
                 continue;
 
             Gizmos.color = Color.black;
@@ -73,16 +69,21 @@ public class DrawInEditor : MonoBehaviour
         //Hermite Drawing
         for (int j = 0; j < pts.Length - 1; j++)
         {
-            if (pts[j] == null || pts[j + 1] == null)
-                continue;
+            if (pts[j] == null || pts[j + 1] == null) continue;
+            if (pts[j].transform == null || pts[j + 1].transform == null) continue;
 
             Gizmos.color = Color.red;
 
             Vector3 P0 = pts[j].transform.position;
             Vector3 P1 = pts[j + 1].transform.position;
 
-            Vector3 T0 = Hermite.Tangent(pts, j, pts[j].gameObject.GetComponent<ControlPoint>().tension);
-            Vector3 T1 = Hermite.Tangent(pts, j + 1, pts[j + 1].gameObject.GetComponent<ControlPoint>().tension);
+            ControlPoint cp0 = pts[j].GetComponent<ControlPoint>();
+            ControlPoint cp1 = pts[j + 1].GetComponent<ControlPoint>();
+
+            if (cp0 == null || cp1 == null) continue;
+
+            Vector3 T0 = Hermite.Tangent(pts, j, cp0.tension);
+            Vector3 T1 = Hermite.Tangent(pts, j + 1, cp1.tension);
 
             Vector3 prev = P0;
             for (int s = 1; s <= samplesPerSegment; s++)

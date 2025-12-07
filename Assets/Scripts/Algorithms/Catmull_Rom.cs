@@ -17,7 +17,6 @@ public class Catmull_Rom : MonoBehaviour
 
     public static Vector3 SCR(Vector3 P0, Vector3 P1, Vector3 P2, Vector3 P3, float t)
     {
-        
         if (t < 0f) t = 0f;
         if (t > 1f) t = 1f;
 

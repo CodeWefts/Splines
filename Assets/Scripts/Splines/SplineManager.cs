@@ -14,6 +14,8 @@ public class SplineManager : MonoBehaviour
     [Header("List of Splines")]
     [SerializeField] public List<List<GameObject>> splines = new List<List<GameObject>>();
 
+    private bool isDestroyed = false;
+
     public void AddingNewSpline()
     {
         int tmpIdx = GetEmptySplineIdx();
@@ -58,6 +60,7 @@ public class SplineManager : MonoBehaviour
     {
         GameObject spline = new GameObject("Spline_" + FindIndex(idx));
         spline.AddComponent<AlgorithmSelection>();
+        spline.AddComponent<SplineAnimation>();
 
         GameObject controlPoint0 = CreateControlPoint(Vector3.zero);
         controlPoint0.transform.parent = spline.transform;
@@ -83,7 +86,7 @@ public class SplineManager : MonoBehaviour
     {
         GameObject cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
         cube.transform.position = position;
-        cube.transform.localScale = new Vector3(0.2f, 0.2f, 0.2f);
+        cube.transform.localScale = new Vector3(0.05f, 0.05f, 0.05f);
         var renderer = cube.gameObject.GetComponent<Renderer>();
         cube.AddComponent<ControlPoint>();
 
@@ -99,19 +102,28 @@ public class SplineManager : MonoBehaviour
     // Reminder : Execute when the object is enabled (After the Awake)
     private void OnEnable()
     {
-        StartCoroutine(DelayedRefreshSplines());
+        if (isDestroyed) return;
+#if UNITY_EDITOR
+        if (!Application.isPlaying)
+            StartCoroutine(DelayedRefreshSplines());
+#endif
     }
-    
+
 #if UNITY_EDITOR
     // Reminder : Execute when the scene is loading
     private void OnValidate()
     {
+        if (isDestroyed || !Application.isEditor) 
+            return;
+
         EditorApplication.delayCall -= DelayedValidate;
         EditorApplication.delayCall += DelayedValidate;
     }
 
     public void DelayedValidate()
     {
+        if (isDestroyed || !Application.isEditor) 
+            return;
         RefreshSplines();
     }
 #endif
@@ -134,6 +146,7 @@ public class SplineManager : MonoBehaviour
 
     public void FillSplinesFromScene()
     {
+        if (isDestroyed) return;
         splines.Clear();
 
         Scene scene = GetValidScene();
@@ -141,6 +154,7 @@ public class SplineManager : MonoBehaviour
         if (!scene.IsValid())
         {
             Debug.LogError("No valid scene found for SplineManager.");
+            return;
         }
 
         var roots = scene.GetRootGameObjects();
@@ -196,5 +210,10 @@ public class SplineManager : MonoBehaviour
         RefreshSplines();
     }
 #endif
+
+    private void OnDestroy()
+    {
+        isDestroyed = true;
+    }
 
 }
