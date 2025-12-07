@@ -29,7 +29,10 @@ public class SplineManager : MonoBehaviour
         {
             AddControlPoint();
         }
+
+#if UNITY_EDITOR
         DelayedValidate();
+#endif
     }
 
     private int GetEmptySplineIdx()

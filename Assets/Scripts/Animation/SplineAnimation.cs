@@ -73,12 +73,10 @@ public class SplineAnimation : MonoBehaviour
         for (int i = 0; i < instantiatedObjects.Length; i++)
         {
             if (instantiatedObjects[i] == null) continue;
-            instantiatedObjects[i].transform.position = EvaluateSpline(type, pos_t);
 
             float offsetT = pos_t + (i * 0.1f);
             offsetT = Mathf.Clamp01(offsetT);
-            Vector3 position = EvaluateSpline(type, offsetT);
-            instantiatedObjects[i].transform.position = position;
+            instantiatedObjects[i].transform.position = EvaluateSpline(type, offsetT);
         }
     }
 
