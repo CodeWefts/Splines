@@ -37,19 +37,49 @@ public class Hermite
 
     public static Vector3 Tangent(GameObject[] ControlPoints, int i, float tension = 0.5f)
     {
+        // Validation checks
+        // ----------------- 
+
+        if (ControlPoints == null || ControlPoints.Length == 0)
+            return Vector3.zero;
+      
+        if (i < 0 || i >= ControlPoints.Length)
+            return Vector3.zero;
+
+        bool IsValid(GameObject go) => go != null && go.gameObject != null;
+
         if (i == 0)
+        {
+            if (!IsValid(ControlPoints[0]))
+                return Vector3.zero;
+
             return tension * ControlPoints[0].transform.forward;
+        }
+
+        if (!IsValid(ControlPoints[i]))
+            return Vector3.zero;
+
         if (i == ControlPoints.Length - 1)
+        {
+            if (!IsValid(ControlPoints[i]))
+                return Vector3.zero;
+
             return tension * ControlPoints[i].transform.forward;
-        
+        }
+
+        if (!IsValid(ControlPoints[i + 1]))
+            return tension * ControlPoints[i].transform.forward;
+
+        // Tangent computation
+        // -------------------
+
         Vector3 localForward = ControlPoints[i].transform.forward;
         Vector3 toNext = (ControlPoints[i + 1].transform.position - ControlPoints[i].transform.position).normalized;
 
         return tension * Vector3.Slerp(localForward, toNext, 0.5f);
-        //return tension * (ControlPoints[i + 1].transform.position - ControlPoints[i - 1].transform.position);
     }
 
-    public void Testing()
+    public static void Testing()
     {
         Debug.Log("Hermite Testing Started");
 

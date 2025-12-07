@@ -27,6 +27,7 @@ public class SplineManager : MonoBehaviour
         {
             AddControlPoint();
         }
+        DelayedValidate();
     }
 
     private int GetEmptySplineIdx()
@@ -195,4 +196,5 @@ public class SplineManager : MonoBehaviour
         RefreshSplines();
     }
 #endif
+
 }
